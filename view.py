@@ -1,7 +1,5 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QListWidget, QVBoxLayout, QWidget, QTextEdit, \
-    QHBoxLayout
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QListWidget, QVBoxLayout, QWidget, QTextEdit, QHBoxLayout
 import pyqtgraph as pg
-
 
 class DeviceView(QMainWindow):
     def __init__(self):
