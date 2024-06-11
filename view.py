@@ -22,12 +22,20 @@ class DeviceView(QMainWindow):
         self.left_layout.addWidget(self.data_display)
         self.left_layout.addWidget(self.stop_button)
 
-        self.plot_widget = pg.PlotWidget()
-        self.plot_widget.setTitle("Real-time Data")
-        self.plot_widget.setLabel('left', 'Value')
-        self.plot_widget.setLabel('bottom', 'Time', 's')
-        self.plot_widget.showGrid(x=True, y=True)
-        self.right_layout.addWidget(self.plot_widget)
+        self.plot_widget_1 = pg.PlotWidget()
+        self.plot_widget_1.setTitle("Real-time Data - Plot 1")
+        self.plot_widget_1.setLabel('left', 'Value')
+        self.plot_widget_1.setLabel('bottom', 'Time', 's')
+        self.plot_widget_1.showGrid(x=True, y=True)
+
+        self.plot_widget_2 = pg.PlotWidget()
+        self.plot_widget_2.setTitle("Real-time Data - Plot 2")
+        self.plot_widget_2.setLabel('left', 'Value')
+        self.plot_widget_2.setLabel('bottom', 'Time', 's')
+        self.plot_widget_2.showGrid(x=True, y=True)
+
+        self.right_layout.addWidget(self.plot_widget_1)
+        self.right_layout.addWidget(self.plot_widget_2)
 
         self.main_layout.addLayout(self.left_layout)
         self.main_layout.addLayout(self.right_layout)
