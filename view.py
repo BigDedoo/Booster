@@ -217,4 +217,3 @@ if __name__ == '__main__':
     window = DeviceView()
     window.show()
     sys.exit(app.exec())
-┴
