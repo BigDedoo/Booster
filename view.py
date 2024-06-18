@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QTextEdit, QHBoxLayout, \
-    QSlider, QLineEdit, QLabel, QComboBox, QGroupBox
+    QSlider, QLineEdit, QLabel, QComboBox, QGroupBox, QTabWidget
 from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot
 import pyqtgraph as pg
 
@@ -53,56 +53,29 @@ class SliderWithText(QWidget):
             pass  # Ignore invalid input
 
 
-class DeviceView(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("COM Port and NI Devices")
+class SourceCathodeSection(QGroupBox):
+    def __init__(self, parent=None):
+        super().__init__("Source Cathode", parent)
 
-        self.main_layout = QHBoxLayout()
-
-        self.left_layout = QVBoxLayout()
-        self.right_layout = QVBoxLayout()
-
-        self.data_display = QTextEdit()
-        self.data_display.setReadOnly(True)
-        self.stop_button = QPushButton("Stop")
-
-        self.plot_widget_1 = pg.PlotWidget()
-        self.plot_widget_1.setTitle("Real-time Data - Plot 1")
-        self.plot_widget_1.setLabel('left', 'Value')
-        self.plot_widget_1.setLabel('bottom', 'Time', 's')
-        self.plot_widget_1.showGrid(x=True, y=True)
-
-        self.plot_widget_2 = pg.PlotWidget()
-        self.plot_widget_2.setTitle("Real-time Data - Plot 2")
-        self.plot_widget_2.setLabel('left', 'Value')
-        self.plot_widget_2.setLabel('bottom', 'Time', 's')
-        self.plot_widget_2.showGrid(x=True, y=True)
-
-        self.left_layout.addWidget(self.plot_widget_1)
-        self.left_layout.addWidget(self.plot_widget_2)
-
-        # Create a horizontal layout for "Source Cathode", "Einzel Extraction", and the new section
-        self.horizontal_layout = QHBoxLayout()
-
-        # Add new section for "source cathode" in a group box
-        self.source_cathode_group = QGroupBox("Source Cathode")
-        self.source_cathode_layout = QVBoxLayout()
+        self.layout = QVBoxLayout()
 
         self.slider1 = SliderWithText("Slider 1")
         self.slider2 = SliderWithText("Slider 2")
         self.input_label = QLabel("Input Text")
         self.input_text = QLineEdit()
 
-        self.source_cathode_layout.addWidget(self.slider1)
-        self.source_cathode_layout.addWidget(self.slider2)
-        self.source_cathode_layout.addWidget(self.input_label)
-        self.source_cathode_layout.addWidget(self.input_text)
-        self.source_cathode_group.setLayout(self.source_cathode_layout)
+        self.layout.addWidget(self.slider1)
+        self.layout.addWidget(self.slider2)
+        self.layout.addWidget(self.input_label)
+        self.layout.addWidget(self.input_text)
+        self.setLayout(self.layout)
 
-        # Add new section for "Einzel extraction" in a group box
-        self.einzel_group = QGroupBox("Einzel Extraction")
-        self.einzel_layout = QVBoxLayout()
+
+class EinzelExtractionSection(QGroupBox):
+    def __init__(self, parent=None):
+        super().__init__("Einzel Extraction", parent)
+
+        self.layout = QVBoxLayout()
 
         self.einzel_slider1 = SliderWithText("Einzel Slider 1")
         self.einzel_slider2 = SliderWithText("Einzel Slider 2")
@@ -113,30 +86,22 @@ class DeviceView(QMainWindow):
         self.einzel_output = QTextEdit()
         self.einzel_output.setReadOnly(True)
 
-        self.einzel_layout.addWidget(self.einzel_slider1)
-        self.einzel_layout.addWidget(self.einzel_slider2)
-        self.einzel_layout.addWidget(self.einzel_input_labels[0])
-        self.einzel_layout.addWidget(self.einzel_inputs[0])
-        self.einzel_layout.addWidget(self.einzel_input_labels[1])
-        self.einzel_layout.addWidget(self.einzel_inputs[1])
-        self.einzel_layout.addWidget(self.einzel_output_label)
-        self.einzel_layout.addWidget(self.einzel_output)
-        self.einzel_group.setLayout(self.einzel_layout)
+        self.layout.addWidget(self.einzel_slider1)
+        self.layout.addWidget(self.einzel_slider2)
+        self.layout.addWidget(self.einzel_input_labels[0])
+        self.layout.addWidget(self.einzel_inputs[0])
+        self.layout.addWidget(self.einzel_input_labels[1])
+        self.layout.addWidget(self.einzel_inputs[1])
+        self.layout.addWidget(self.einzel_output_label)
+        self.layout.addWidget(self.einzel_output)
+        self.setLayout(self.layout)
 
-        # Add the "Source Cathode" and "Einzel Extraction" sections to the horizontal layout
-        self.horizontal_layout.addWidget(self.source_cathode_group)
-        self.horizontal_layout.addWidget(self.einzel_group)
 
-        # Set equal stretch for both sections to ensure equal width
-        self.horizontal_layout.setStretch(0, 1)
-        self.horizontal_layout.setStretch(1, 1)
+class NewSection(QGroupBox):
+    def __init__(self, parent=None):
+        super().__init__("New Section", parent)
 
-        # Add the horizontal layout to the right layout
-        self.right_layout.addLayout(self.horizontal_layout)
-
-        # Add new section with specified components in a group box
-        self.new_section_group = QGroupBox("New Section")
-        self.new_section_layout = QVBoxLayout()
+        self.layout = QVBoxLayout()
 
         self.dropdown_menu = QComboBox()
         self.dropdown_menu.addItems(["Option 1", "Option 2", "Option 3"])
@@ -160,50 +125,175 @@ class DeviceView(QMainWindow):
         self.new_output = QTextEdit()
         self.new_output.setReadOnly(True)
 
-        self.new_section_layout.addWidget(self.dropdown_menu)
-        self.new_section_layout.addWidget(self.press_button)
-        self.new_section_layout.addLayout(self.led_layout)
+        self.layout.addWidget(self.dropdown_menu)
+        self.layout.addWidget(self.press_button)
+        self.layout.addLayout(self.led_layout)
 
         for label, input_text in zip(self.new_input_labels, self.new_inputs):
-            self.new_section_layout.addWidget(label)
-            self.new_section_layout.addWidget(input_text)
+            self.layout.addWidget(label)
+            self.layout.addWidget(input_text)
 
-        self.new_section_layout.addWidget(self.new_output_label)
-        self.new_section_layout.addWidget(self.new_output)
+        self.layout.addWidget(self.new_output_label)
+        self.layout.addWidget(self.new_output)
 
-        self.new_section_group.setLayout(self.new_section_layout)
+        self.setLayout(self.layout)
 
-        # Add the new section layout to the right layout
-        self.right_layout.addWidget(self.new_section_group)
 
-        # Add new Section 1
-        self.section1_group = QGroupBox("Section 1")
-        self.section1_layout = QVBoxLayout()
+class Section1(QGroupBox):
+    def __init__(self, parent=None):
+        super().__init__("Section 1", parent)
 
-        # Add widgets to Section 1 as needed
-        self.section1_label = QLabel("Section 1 Content")
-        self.section1_layout.addWidget(self.section1_label)
+        self.layout = QVBoxLayout()
 
-        self.section1_group.setLayout(self.section1_layout)
-        self.right_layout.addWidget(self.section1_group)
+        # 3 sliders with their respective text inputs
+        self.slider1 = SliderWithText("Slider 1")
+        self.slider2 = SliderWithText("Slider 2")
+        self.slider3 = SliderWithText("Slider 3")
 
-        # Add new Section 2
-        self.section2_group = QGroupBox("Section 2")
-        self.section2_layout = QVBoxLayout()
+        # 2 text outputs
+        self.output1_label = QLabel("Output 1")
+        self.output1 = QTextEdit()
+        self.output1.setReadOnly(True)
 
-        # Add widgets to Section 2 as needed
-        self.section2_label = QLabel("Section 2 Content")
-        self.section2_layout.addWidget(self.section2_label)
+        self.output2_label = QLabel("Output 2")
+        self.output2 = QTextEdit()
+        self.output2.setReadOnly(True)
 
-        self.section2_group.setLayout(self.section2_layout)
-        self.right_layout.addWidget(self.section2_group)
+        # Adding widgets to layout
+        self.layout.addWidget(self.slider1)
+        self.layout.addWidget(self.slider2)
+        self.layout.addWidget(self.slider3)
+        self.layout.addWidget(self.output1_label)
+        self.layout.addWidget(self.output1)
+        self.layout.addWidget(self.output2_label)
+        self.layout.addWidget(self.output2)
 
-        # Add remaining widgets to the right layout
-        self.right_layout.addWidget(self.data_display)
-        self.right_layout.addWidget(self.stop_button)
+        self.setLayout(self.layout)
 
-        self.main_layout.addLayout(self.left_layout)
-        self.main_layout.addLayout(self.right_layout)
+
+class Section2(QGroupBox):
+    def __init__(self, parent=None):
+        super().__init__("Section 2", parent)
+
+        self.layout = QVBoxLayout()
+
+        # 4 sliders with their respective text inputs
+        self.slider1 = SliderWithText("Slider 1")
+        self.slider2 = SliderWithText("Slider 2")
+        self.slider3 = SliderWithText("Slider 3")
+        self.slider4 = SliderWithText("Slider 4")
+
+        # 4 text outputs
+        self.output1_label = QLabel("Output 1")
+        self.output1 = QTextEdit()
+        self.output1.setReadOnly(True)
+
+        self.output2_label = QLabel("Output 2")
+        self.output2 = QTextEdit()
+        self.output2.setReadOnly(True)
+
+        self.output3_label = QLabel("Output 3")
+        self.output3 = QTextEdit()
+        self.output3.setReadOnly(True)
+
+        self.output4_label = QLabel("Output 4")
+        self.output4 = QTextEdit()
+        self.output4.setReadOnly(True)
+
+        # One LED indicator
+        self.led_label = QLabel("LED Indicator")
+        self.led = LEDIndicator()
+
+        # Adding widgets to layout
+        self.layout.addWidget(self.slider1)
+        self.layout.addWidget(self.slider2)
+        self.layout.addWidget(self.slider3)
+        self.layout.addWidget(self.slider4)
+        self.layout.addWidget(self.output1_label)
+        self.layout.addWidget(self.output1)
+        self.layout.addWidget(self.output2_label)
+        self.layout.addWidget(self.output2)
+        self.layout.addWidget(self.output3_label)
+        self.layout.addWidget(self.output3)
+        self.layout.addWidget(self.output4_label)
+        self.layout.addWidget(self.output4)
+        self.layout.addWidget(self.led_label)
+        self.layout.addWidget(self.led)
+
+        self.setLayout(self.layout)
+
+class TabSection(QGroupBox):
+    def __init__(self, parent=None):
+        super().__init__("Tabbed Section", parent)
+
+        self.layout = QVBoxLayout()
+        self.tabs = QTabWidget()
+
+        for i in range(1, 10):
+            tab = QWidget()
+            tab_layout = QVBoxLayout()
+            tab_layout.addWidget(QLabel(f"Content of Tab {i}"))
+            tab.setLayout(tab_layout)
+            self.tabs.addTab(tab, f"Tab {i}")
+
+        self.layout.addWidget(self.tabs)
+        self.setLayout(self.layout)
+
+class DeviceView(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("COM Port and NI Devices")
+
+        self.main_layout = QHBoxLayout()
+        self.plot_layout = QVBoxLayout()
+        self.main_layout = QHBoxLayout()
+        self.data_layout = QVBoxLayout()
+        self.leds_layout = QVBoxLayout()
+        self.tab_layout = QVBoxLayout()
+
+        self.data_display = QTextEdit()
+        self.data_display.setReadOnly(True)
+        self.stop_button = QPushButton("Stop")
+
+        self.plot_widget_1 = pg.PlotWidget()
+        self.plot_widget_1.setTitle("Real-time Data - Plot 1")
+        self.plot_widget_1.setLabel('left', 'Value')
+        self.plot_widget_1.setLabel('bottom', 'Time', 's')
+        self.plot_widget_1.showGrid(x=True, y=True)
+
+        self.plot_widget_2 = pg.PlotWidget()
+        self.plot_widget_2.setTitle("Real-time Data - Plot 2")
+        self.plot_widget_2.setLabel('left', 'Value')
+        self.plot_widget_2.setLabel('bottom', 'Time', 's')
+        self.plot_widget_2.showGrid(x=True, y=True)
+
+        self.plot_layout.addWidget(self.plot_widget_1)
+        self.plot_layout.addWidget(self.plot_widget_2)
+
+        self.source_cathode_section = SourceCathodeSection()
+        self.einzel_extraction_section = EinzelExtractionSection()
+        self.tab_section = TabSection()
+        self.new_section = NewSection()
+        self.section1 = Section1()
+        self.section2 = Section2()
+
+        self.main_layout.addLayout(self.plot_layout)
+        self.main_layout.addWidget(self.source_cathode_section)
+        self.main_layout.addWidget(self.einzel_extraction_section)
+        self.main_layout.addWidget(self.section1)
+        self.main_layout.addWidget(self.section2)
+
+        self.data_layout.addWidget(self.data_display)
+        self.data_layout.addWidget(self.stop_button)
+
+        self.leds_layout.addWidget(self.new_section)
+
+        self.tab_layout.addWidget((self.tab_section))
+
+        self.main_layout.addLayout(self.main_layout)
+        self.main_layout.addLayout(self.leds_layout)
+        self.main_layout.addLayout(self.data_layout)
+        self.main_layout.addLayout(self.tab_layout)
 
         container = QWidget()
         container.setLayout(self.main_layout)
