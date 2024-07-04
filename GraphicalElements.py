@@ -36,8 +36,8 @@ class SliderWithText(QWidget):
         self.range_layout.addWidget(self.min_label)
         self.range_layout.addWidget(self.min_text)
         self.range_layout.addStretch()  # Add stretch to push max elements to the right
-        self.range_layout.addWidget(self.max_text)
         self.range_layout.addWidget(self.max_label)
+        self.range_layout.addWidget(self.max_text)
 
         self.layout.addLayout(self.text_layout)
         self.layout.addLayout(self.slider_layout)
