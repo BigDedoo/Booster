@@ -3,8 +3,11 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout,
 from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot
 
 class SliderWithText(QWidget):
+    value_changed = pyqtSignal(int)
+
     def __init__(self, label_text, parent=None):
         super().__init__(parent)
+        self.setObjectName(label_text)
 
         self.layout = QVBoxLayout()
 
@@ -46,15 +49,14 @@ class SliderWithText(QWidget):
         self.setLayout(self.layout)
 
         self.slider.valueChanged.connect(self.update_text)
+        self.slider.valueChanged.connect(self.value_changed.emit)  # Emit value_changed signal
         self.text.textChanged.connect(self.update_slider)
         self.min_text.editingFinished.connect(self.update_min)
         self.max_text.editingFinished.connect(self.update_max)
 
-    @pyqtSlot(int)
     def update_text(self, value):
         self.text.setText(str(value))
 
-    @pyqtSlot()
     def update_slider(self):
         try:
             value = int(self.text.text())
@@ -63,7 +65,6 @@ class SliderWithText(QWidget):
         except ValueError:
             pass  # Ignore invalid input
 
-    @pyqtSlot()
     def update_min(self):
         try:
             min_value = int(self.min_text.text())
@@ -73,7 +74,6 @@ class SliderWithText(QWidget):
         except ValueError:
             pass  # Ignore invalid input
 
-    @pyqtSlot()
     def update_max(self):
         try:
             max_value = int(self.max_text.text())

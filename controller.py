@@ -18,9 +18,29 @@ class DeviceController:
         self.channels = []
 
         self.view.stop_button.clicked.connect(self.stop_data_reception)
+        self.view.section1.slider_value_changed.connect(self.handle_slider_value_changed)
+
+        # Mapping slider IDs to DAQmx channels
+        self.slider_channel_map = {
+            "slider_90": "Dev1/ao0",
+            "slider2": "Dev1/ao1",
+            "slider3": "Dev1/ao2"  # Add more if you have additional sliders
+        }
 
         # Refresh the device list and automatically start plotting
         self.refresh_device_list()
+
+    def handle_slider_value_changed(self, slider_id, value):
+        channel = self.slider_channel_map.get(slider_id)
+        if channel:
+            try:
+                daq_task = daq.Task()
+                daq_task.CreateAOVoltageChan(channel, "", -10.0, 10.0, daq.DAQmx_Val_Volts, None)
+                daq_task.WriteAnalogScalarF64(1, 10.0, value, None)
+                daq_task.StopTask()
+                daq_task.ClearTask()
+            except Exception as e:
+                self.view.data_display.append(f"Error writing value to {channel}: {e}")
 
     def refresh_device_list(self):
         devices = self.model.refresh_devices()

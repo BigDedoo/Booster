@@ -104,6 +104,8 @@ class LedSection(QGroupBox):
 
 
 class Section1(QGroupBox):
+    slider_value_changed = pyqtSignal(str, int)
+
     def __init__(self, parent=None):
         super().__init__("Section 1", parent)
 
@@ -113,9 +115,12 @@ class Section1(QGroupBox):
         self.meta_layout_right = QVBoxLayout()
 
         # 3 sliders with their respective text inputs
-        self.slider1 = SliderWithText("90° (A)")
-        self.slider2 = SliderWithText("St 90Y (V)")
-        self.slider3 = SliderWithText("DeltaV (V)")
+        self.slider_90 = SliderWithText("90° (A)")
+        self.slider_90.setObjectName("slider_90")
+        self.slider_st_90_y = SliderWithText("St 90Y (V)")
+        self.slider_st_90_y.setObjectName("slider_st_90_y")
+        self.slider_delta_V = SliderWithText("DeltaV (V)")
+        self.slider_delta_V.setObjectName("slider_delta_V")
 
         # 2 text outputs
         self.output1_label = QLabel("Hall 90 (mT)")
@@ -127,9 +132,9 @@ class Section1(QGroupBox):
         self.output2.setReadOnly(True)
 
         # Adding widgets to layout
-        self.meta_layout_left.addWidget(self.slider1)
-        self.meta_layout_left.addWidget(self.slider2)
-        self.meta_layout_left.addWidget(self.slider3)
+        self.meta_layout_left.addWidget(self.slider_90)
+        self.meta_layout_left.addWidget(self.slider_st_90_y)
+        self.meta_layout_left.addWidget(self.slider_delta_V)
         self.meta_layout_right.addWidget(self.output1_label)
         self.meta_layout_right.addWidget(self.output1)
         self.meta_layout_right.addWidget(self.output2_label)
@@ -139,7 +144,12 @@ class Section1(QGroupBox):
         self.layout.addLayout(self.meta_layout_right, stretch=2)
 
         self.setLayout(self.layout)
-
+        self.slider_90.value_changed.connect(
+            lambda value: self.slider_value_changed.emit(self.slider_90.objectName(), value))
+        self.slider_st_90_y.value_changed.connect(
+            lambda value: self.slider_value_changed.emit(self.slider_st_90_y.objectName(), value))
+        self.slider_delta_V.value_changed.connect(
+            lambda value: self.slider_value_changed.emit(self.slider_delta_V.objectName(), value))
 
 class Section2(QGroupBox):
     def __init__(self, parent=None):
